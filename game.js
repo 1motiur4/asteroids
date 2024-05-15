@@ -33,9 +33,35 @@ class Ship {
       [-4, 3],
       [4, 3],
     ];
+    this.angularVelocity = 0;
+    this.angle = 0;
+    this.velocity = { x: 0, y: 0 };
+
+    document.addEventListener("keydown", (event) => {
+      if (event.keyCode === 37) {
+        this.angularVelocity = -Math.PI / 30;
+      }
+
+      if (event.keyCode === 39) {
+        this.angularVelocity = Math.PI / 30;
+      }
+
+      if (event.keyCode === 38) {
+        this.velocity.x += Math.sin(this.angle) / 5;
+        this.velocity.y += -Math.sin(this.angle) / 5;
+      }
+    });
+
+    document.addEventListener("keyup", (event) => {
+      if (event.keyCode === 37 || event.keyCode === 39) {
+        this.angularVelocity = 0;
+      }
+    });
   }
 
   draw(ctx) {
+    this.update();
+
     ctx.strokeStyle = "white";
     ctx.lineWidth = 1.25;
 
@@ -43,13 +69,21 @@ class Ship {
     ctx.save();
     ctx.beginPath();
     ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
     ctx.moveTo(this.shape[0][0], this.shape[0][1]);
     ctx.lineTo(this.shape[1][0], this.shape[1][1]);
     ctx.lineTo(this.shape[2][0], this.shape[2][1]);
     ctx.lineTo(this.shape[0][0], this.shape[0][1]);
+    // ctx.closePatch();
 
     ctx.stroke();
     ctx.restore();
+  }
+
+  update() {
+    this.angle += this.angularVelocity;
+    this.x += this.velocity.x;
+    this.y += this.velocity.y;
   }
 }
 
