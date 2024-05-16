@@ -4,6 +4,7 @@ class Game {
     this.ctx = this.canvas.getContext("2d");
 
     this.ship = new Ship();
+    this.asteroid = new Asteroid();
   }
 
   play() {
@@ -11,6 +12,7 @@ class Game {
       this.resetCanvas();
       this.setBackground();
       this.ship.draw(this.ctx);
+      this.asteroid.draw(this.ctx);
     }, 33);
   }
 
@@ -39,7 +41,7 @@ class Ship {
     this.power = false;
 
     document.addEventListener("keydown", (event) => {
-      console.log(event.keyCode)
+      console.log(event.keyCode);
       if (event.keyCode === 37) {
         this.angularVelocity = -Math.PI / 30;
       }
@@ -89,8 +91,8 @@ class Ship {
   update() {
     this.angle += this.angularVelocity;
 
-    this.velocity.x *= .985;
-    this.velocity.y *= .985;
+    this.velocity.x *= 0.985;
+    this.velocity.y *= 0.985;
 
     if (this.power) {
       this.velocity.x += Math.sin(this.angle) / 5;
@@ -113,6 +115,48 @@ class Ship {
 
     if (this.y < 0) {
       this.y = 500;
+    }
+  }
+}
+
+class Asteroid {
+  constructor() {
+    this.x = Math.floor(Math.random() * 501);
+    this.y = Math.floor(Math.random() * 501);
+    this.radius = (Math.floor(Math.random() * 3) + 2) * 12;
+    this.velocity = { x: Math.random() * 4 - 2, y: Math.random() * 4 - 2 };
+  }
+
+  draw(ctx) {
+    this.update();
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 1.25;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    ctx.closePath();
+    ctx.restore();
+    ctx.stroke();
+  }
+
+  update() {
+    this.x += this.velocity.x;
+    this.y += this.velocity.y;
+
+    if (this.x > 500 + this.radius) {
+      this.x = 0 - this.radius;
+    }
+
+    if (this.x < 0 - this.radius) {
+      this.x = 500 + this.radius;
+    }
+
+    if (this.y > 500 + this.radius) {
+      this.y = 0 - this.radius;
+    }
+
+    if (this.y < 0 - this.radius) {
+      this.y = 500 + this.radius;
     }
   }
 }
