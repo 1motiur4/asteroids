@@ -3,16 +3,32 @@ class Game {
     this.canvas = document.getElementById("asteroids-canvas");
     this.ctx = this.canvas.getContext("2d");
 
+    this.shipHit = false;
     this.ship = new Ship();
-    this.asteroid = new Asteroid();
+    this.asteroids = [];
+
+    for (let i = 0; i < 10; i++) {
+      this.asteroids.push(new Asteroid());
+    }
   }
 
   play() {
     setInterval(() => {
-      this.resetCanvas();
-      this.setBackground();
-      this.ship.draw(this.ctx);
-      this.asteroid.draw(this.ctx);
+      if (!this.shipHit) {
+        this.resetCanvas();
+        this.setBackground();
+        this.ship.draw(this.ctx);
+
+        this.asteroids.forEach((asteroid) => {
+          asteroid.draw(this.ctx);
+        });
+      } else {
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "30px Arial";
+        this.ctx.fillText("Game Over", 170, 250);
+      }
+
+      this.update();
     }, 33);
   }
 
@@ -23,6 +39,15 @@ class Game {
   setBackground() {
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  update() {
+    this.asteroids.forEach((asteroid) => {
+      if (this.ship.isHit(asteroid)) {
+        this.shipHit = true;
+        console.log("oh no I'm hit");
+      }
+    });
   }
 }
 
@@ -37,8 +62,9 @@ class Ship {
     ];
     this.angularVelocity = 0;
     this.angle = 0;
-    this.velocity = { x: 0, y: 0 };
     this.power = false;
+    this.radius = 4;
+    this.velocity = { x: 0, y: 0 };
 
     document.addEventListener("keydown", (event) => {
       console.log(event.keyCode);
@@ -116,6 +142,13 @@ class Ship {
     if (this.y < 0) {
       this.y = 500;
     }
+  }
+
+  isHit(asteroid) {
+    return (
+      Math.sqrt((this.x - asteroid.x) ** 2 + (this.y - asteroid.y) ** 2) <
+      this.radius + asteroid.radius
+    );
   }
 }
 
