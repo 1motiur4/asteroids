@@ -6,6 +6,7 @@ class Game {
     this.shipHit = false;
     this.ship = new Ship();
     this.asteroids = [];
+    this.points = 0;
 
     for (let i = 0; i < 10; i++) {
       this.asteroids.push(new Asteroid());
@@ -26,6 +27,10 @@ class Game {
         this.ship.bullets.forEach((bullet) => {
           bullet.draw(this.ctx);
         });
+
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "22px Arial";
+        this.ctx.fillText("Points: " + this.points, 15, 30);
       } else {
         this.ctx.fillStyle = "white";
         this.ctx.font = "30px Arial";
@@ -61,6 +66,18 @@ class Game {
         const bulletIndex = this.ship.bullets.indexOf(bullet);
 
         if (asteroid.isHit(bullet)) {
+          this.points += asteroid.radius;
+          // spawning smaller asteroids
+          if (asteroid.radius > 12) {
+            const numOfAsteroids = (asteroid.radius - 12) / 12;
+            console.log(numOfAsteroids);
+            for (let h = 0; h < numOfAsteroids; h++) {
+              this.asteroids.push(
+                new Asteroid(asteroid.x, asteroid.y, asteroid.radius - 12)
+              );
+            }
+          }
+
           this.asteroids.splice(asteroidIndex, 1);
           this.ship.bullets.splice(bulletIndex, 1);
         }

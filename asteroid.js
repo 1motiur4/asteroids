@@ -1,8 +1,8 @@
 class Asteroid {
-  constructor() {
-    this.x = this.generateRandom();
-    this.y = this.generateRandom();
-    this.radius = (Math.floor(Math.random() * 3) + 2) * 12;
+  constructor(x, y, radius) {
+    this.x = x ? x : this.generateRandom();
+    this.y = y ? y : this.generateRandom();
+    this.radius = radius ? radius : (Math.floor(Math.random() * 3) + 2) * 12;
     this.velocity = { x: Math.random() * 4 - 2, y: Math.random() * 4 - 2 };
   }
 
