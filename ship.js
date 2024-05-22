@@ -16,6 +16,7 @@ class Ship {
     this.isFiring = false;
 
     document.addEventListener("keydown", (event) => {
+    //   console.log(event.keyCode);
       if (event.keyCode === 37) {
         this.angularVelocity = -Math.PI / 30;
       }

@@ -4,9 +4,35 @@ class Game {
     this.ctx = this.canvas.getContext("2d");
 
     this.shipHit = false;
+    this.paused = false;
     this.ship = new Ship();
     this.asteroids = [];
     this.points = 0;
+
+    for (let i = 0; i < 10; i++) {
+      this.asteroids.push(new Asteroid());
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.keyCode === 82) {
+        if (this.shipHit) {
+          this.reset();
+        }
+      }
+
+      if (event.keyCode === 80) {
+        if (!this.shipHit) {
+          this.paused = !this.paused;
+        }
+      }
+    });
+  }
+
+  reset() {
+    this.ship = new Ship();
+    this.asteroids = [];
+    this.points = 0;
+    this.shipHit = false;
 
     for (let i = 0; i < 10; i++) {
       this.asteroids.push(new Asteroid());
@@ -15,7 +41,7 @@ class Game {
 
   play() {
     setInterval(() => {
-      if (!this.shipHit) {
+      if (!this.shipHit && !this.paused) {
         this.resetCanvas();
         this.setBackground();
         this.ship.draw(this.ctx);
@@ -31,10 +57,22 @@ class Game {
         this.ctx.fillStyle = "white";
         this.ctx.font = "22px Arial";
         this.ctx.fillText("Points: " + this.points, 15, 30);
-      } else {
+      } else if (this.shipHit) {
+        // Game Over
+        this.ctx.fillStyle = "red";
+        this.ctx.beginPath();
+        this.ctx.roundRect(120, 210, 260, 120, 5);
+        this.ctx.stroke();
+        this.ctx.fill();
+
         this.ctx.fillStyle = "white";
         this.ctx.font = "30px Arial";
         this.ctx.fillText("Game Over", 170, 250);
+        this.ctx.fillText("Press R to restart", 130, 300);
+      } else if (this.paused) {
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "30px Arial";
+        this.ctx.fillText("PAUSED", 180, 250);
       }
 
       this.update();
@@ -71,7 +109,7 @@ class Game {
           if (asteroid.radius > 12) {
             const numOfAsteroids = (asteroid.radius - 12) / 12;
             console.log(numOfAsteroids);
-            for (let h = 0; h < numOfAsteroids; h++) {
+            for (let h = 1; h < numOfAsteroids; h++) {
               this.asteroids.push(
                 new Asteroid(asteroid.x, asteroid.y, asteroid.radius - 12)
               );
