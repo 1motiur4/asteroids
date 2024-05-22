@@ -1,7 +1,7 @@
 class Ship {
-  constructor() {
-    this.x = 250;
-    this.y = 250;
+  constructor(x, y) {
+    this.x = x ? x : 250;
+    this.y = y ? y : 250;
     this.shape = [
       [0, -10],
       [-4, 3],

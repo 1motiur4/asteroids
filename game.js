@@ -8,6 +8,7 @@ class Game {
     this.ship = new Ship();
     this.asteroids = [];
     this.points = 0;
+    this.lives = 3;
 
     for (let i = 0; i < 10; i++) {
       this.asteroids.push(new Asteroid());
@@ -32,11 +33,28 @@ class Game {
     this.ship = new Ship();
     this.asteroids = [];
     this.points = 0;
+    this.lives = 3;
     this.shipHit = false;
 
     for (let i = 0; i < 10; i++) {
       this.asteroids.push(new Asteroid());
     }
+  }
+
+  respawn() {
+    let x = this.generateRandom();
+    let y = this.generateRandom();
+    this.ship = new Ship(x, y);
+    this.asteroids.forEach((asteroid) => {
+      if (this.ship.isHit(asteroid)) {
+        this.respawn();
+      }
+    });
+    return;
+  }
+
+  generateRandom() {
+    return Math.floor(Math.random() * 501);
   }
 
   play() {
@@ -53,10 +71,14 @@ class Game {
         this.ship.bullets.forEach((bullet) => {
           bullet.draw(this.ctx);
         });
-
+        // Points display
         this.ctx.fillStyle = "white";
         this.ctx.font = "22px Arial";
         this.ctx.fillText("Points: " + this.points, 15, 30);
+        // Lives display
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "22px Arial";
+        this.ctx.fillText("Lives: " + this.lives, 415, 30);
       } else if (this.shipHit) {
         // Game Over
         this.ctx.fillStyle = "red";
@@ -124,7 +146,12 @@ class Game {
 
     this.asteroids.forEach((asteroid) => {
       if (this.ship.isHit(asteroid)) {
-        this.shipHit = true;
+        if (this.lives === 1) {
+          this.shipHit = true;
+        } else {
+          this.respawn();
+          this.lives -= 1;
+        }
       }
     });
   }
