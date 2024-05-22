@@ -7,7 +7,7 @@ class Game {
     this.ship = new Ship();
     this.asteroids = [];
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
       this.asteroids.push(new Asteroid());
     }
   }

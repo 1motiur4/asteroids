@@ -1,9 +1,27 @@
 class Asteroid {
   constructor() {
-    this.x = Math.floor(Math.random() * 501);
-    this.y = Math.floor(Math.random() * 501);
+    this.x = this.generateRandom();
+    this.y = this.generateRandom();
     this.radius = (Math.floor(Math.random() * 3) + 2) * 12;
     this.velocity = { x: Math.random() * 4 - 2, y: Math.random() * 4 - 2 };
+  }
+
+  //   generateRandom() {
+  //     var num = Math.floor(Math.random() * 501);
+  //     if (num > 50 && num < 450) {
+  //       return this.generateRandom();
+  //     }
+  //     return num;
+  //   }
+
+  // From ChatGPT, more efficient, avoids issues with call stack limits
+  generateRandom() {
+    while (true) {
+      var num = Math.floor(Math.random() * 501);
+      if (num <= 150 || num >= 350) {
+        return num;
+      }
+    }
   }
 
   draw(ctx) {

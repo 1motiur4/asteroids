@@ -1,0 +1,5 @@
+1. Make larger asteroids break into smaller asteroids 
+- take x, y, angle values of larger asteroids
+- randomize angle value of each asteroid
+- Size 3 asteroid becomes 3 size 1 asteroids 
+- Size 2 asteroid becomes 2 size 1 asteroids 
