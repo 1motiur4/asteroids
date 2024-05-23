@@ -5,10 +5,13 @@ class Game {
 
     this.shipHit = false;
     this.paused = false;
+    this.startScreen = true;
     this.ship = new Ship();
     this.asteroids = [];
     this.points = 0;
     this.lives = 3;
+    this.level = 1;
+    this.currentTime = null;
 
     for (let i = 0; i < 10; i++) {
       this.asteroids.push(new Asteroid());
@@ -16,15 +19,22 @@ class Game {
 
     document.addEventListener("keydown", (event) => {
       if (event.keyCode === 82) {
+        //R key
         if (this.shipHit) {
           this.reset();
         }
       }
 
       if (event.keyCode === 80) {
+        //P key
         if (!this.shipHit) {
           this.paused = !this.paused;
         }
+      }
+
+      if (event.keyCode === 13) {
+        this.startScreen = false;
+        this.currentTime = Date.now();
       }
     });
   }
@@ -50,7 +60,7 @@ class Game {
         this.respawn();
       }
     });
-    return;
+    // return;
   }
 
   generateRandom() {
@@ -59,28 +69,10 @@ class Game {
 
   play() {
     setInterval(() => {
-      if (!this.shipHit && !this.paused) {
+      if (this.startScreen) {
         this.resetCanvas();
         this.setBackground();
-        this.ship.draw(this.ctx);
 
-        this.asteroids.forEach((asteroid) => {
-          asteroid.draw(this.ctx);
-        });
-
-        this.ship.bullets.forEach((bullet) => {
-          bullet.draw(this.ctx);
-        });
-        // Points display
-        this.ctx.fillStyle = "white";
-        this.ctx.font = "22px Arial";
-        this.ctx.fillText("Points: " + this.points, 15, 30);
-        // Lives display
-        this.ctx.fillStyle = "white";
-        this.ctx.font = "22px Arial";
-        this.ctx.fillText("Lives: " + this.lives, 415, 30);
-      } else if (this.shipHit) {
-        // Game Over
         this.ctx.fillStyle = "red";
         this.ctx.beginPath();
         this.ctx.roundRect(120, 210, 260, 120, 5);
@@ -89,12 +81,45 @@ class Game {
 
         this.ctx.fillStyle = "white";
         this.ctx.font = "30px Arial";
-        this.ctx.fillText("Game Over", 170, 250);
-        this.ctx.fillText("Press R to restart", 130, 300);
-      } else if (this.paused) {
-        this.ctx.fillStyle = "white";
-        this.ctx.font = "30px Arial";
-        this.ctx.fillText("PAUSED", 180, 250);
+        this.ctx.fillText("Press ENTER to start!", 130, 300);
+      } else {
+        if (!this.shipHit && !this.paused) {
+          this.resetCanvas();
+          this.setBackground();
+          this.ship.draw(this.ctx);
+
+          this.asteroids.forEach((asteroid) => {
+            asteroid.draw(this.ctx);
+          });
+
+          this.ship.bullets.forEach((bullet) => {
+            bullet.draw(this.ctx);
+          });
+          // Points display
+          this.ctx.fillStyle = "white";
+          this.ctx.font = "22px Arial";
+          this.ctx.fillText("Points: " + this.points, 15, 30);
+          // Lives display
+          this.ctx.fillStyle = "white";
+          this.ctx.font = "22px Arial";
+          this.ctx.fillText("Lives: " + this.lives, 415, 30);
+        } else if (this.shipHit) {
+          // Game Over
+          this.ctx.fillStyle = "red";
+          this.ctx.beginPath();
+          this.ctx.roundRect(120, 210, 260, 120, 5);
+          this.ctx.stroke();
+          this.ctx.fill();
+
+          this.ctx.fillStyle = "white";
+          this.ctx.font = "30px Arial";
+          this.ctx.fillText("Game Over", 170, 250);
+          this.ctx.fillText("Press R to restart", 130, 300);
+        } else if (this.paused) {
+          this.ctx.fillStyle = "white";
+          this.ctx.font = "30px Arial";
+          this.ctx.fillText("PAUSED", 180, 250);
+        }
       }
 
       this.update();
