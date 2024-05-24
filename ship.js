@@ -49,7 +49,7 @@ class Ship {
     });
   }
 
-  (ctx) {
+  draw(ctx) {
     this.update();
 
     ctx.strokeStyle = "white";
