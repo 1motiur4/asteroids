@@ -16,7 +16,7 @@ class Ship {
     this.isFiring = false;
 
     document.addEventListener("keydown", (event) => {
-    //   console.log(event.keyCode);
+      //   console.log(event.keyCode);
       if (event.keyCode === 37) {
         this.angularVelocity = -Math.PI / 30;
       }
@@ -49,7 +49,7 @@ class Ship {
     });
   }
 
-  draw(ctx) {
+  (ctx) {
     this.update();
 
     ctx.strokeStyle = "white";
