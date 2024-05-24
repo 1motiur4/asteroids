@@ -11,7 +11,9 @@ class Game {
     this.points = 0;
     this.lives = 3;
     this.level = 1;
-    this.currentTime = null;
+    this.startTime = null;
+    this.elapsedTime = 0;
+    this.lastTime = null;
 
     for (let i = 0; i < 10; i++) {
       this.asteroids.push(new Asteroid());
@@ -26,25 +28,44 @@ class Game {
       }
 
       if (event.keyCode === 80) {
-        //P key
+        // P key
         if (!this.shipHit) {
           this.paused = !this.paused;
+          if (this.paused) {
+            this.elapsedTime += new Date() - this.lastTime;
+          } else {
+            this.lastTime = new Date();
+          }
         }
       }
 
       if (event.keyCode === 13) {
         this.startScreen = false;
-        this.currentTime = Date.now();
+        this.startTime = new Date();
+        this.lastTime = new Date();
       }
     });
   }
+
+  updateTime() {
+    if (!this.paused && !this.startScreen && !this.shipHit) {
+      const now = new Date();
+      this.elapsedTime += now - this.lastTime;
+      this.lastTime = now;
+    }
+  }
+
+  pauseTime() {}
 
   reset() {
     this.ship = new Ship();
     this.asteroids = [];
     this.points = 0;
     this.lives = 3;
+    this.level = 1;
     this.shipHit = false;
+    this.elapsedTime = 0;
+    this.lastTime = new Date();
 
     for (let i = 0; i < 10; i++) {
       this.asteroids.push(new Asteroid());
@@ -84,6 +105,7 @@ class Game {
         this.ctx.fillText("Press ENTER to start!", 130, 300);
       } else {
         if (!this.shipHit && !this.paused) {
+          this.updateTime();
           this.resetCanvas();
           this.setBackground();
           this.ship.draw(this.ctx);
@@ -103,6 +125,20 @@ class Game {
           this.ctx.fillStyle = "white";
           this.ctx.font = "22px Arial";
           this.ctx.fillText("Lives: " + this.lives, 415, 30);
+
+          // Timer display
+          const seconds = Math.floor(this.elapsedTime / 1000);
+          const minutes = Math.floor(seconds / 60);
+          const displaySeconds = seconds % 60;
+          this.ctx.fillStyle = "white";
+          this.ctx.font = "22px Arial";
+          this.ctx.fillText(
+            `Timer: ${minutes}:${
+              displaySeconds < 10 ? "0" : ""
+            }${displaySeconds}`,
+            15,
+            480
+          );
         } else if (this.shipHit) {
           // Game Over
           this.ctx.fillStyle = "red";
@@ -155,7 +191,6 @@ class Game {
           // spawning smaller asteroids
           if (asteroid.radius > 12) {
             const numOfAsteroids = (asteroid.radius - 12) / 12;
-            console.log(numOfAsteroids);
             for (let h = 1; h < numOfAsteroids; h++) {
               this.asteroids.push(
                 new Asteroid(asteroid.x, asteroid.y, asteroid.radius - 12)
